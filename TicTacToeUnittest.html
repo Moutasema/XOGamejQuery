@@ -1,0 +1,23 @@
+﻿/// <reference path="TicTacToe.js" />
+/// <reference path="http://code.jquery.com/jquery-latest.min.js" />
+
+var pcPlayer = new PcPlayer("x");
+var humanPlayer = new HumanPlayer("o");
+
+var gameEngine = new GameEngine(humanPlayer, pcPlayer);
+pcPlayer.strategy = new MinimaxGameStrategy(gameEngine);
+
+
+gameEngine.move(new GameMove("o", 1, 1));
+
+var gameMove = pcPlayer.think();
+gameEngine.move(gameMove);
+
+gameEngine.move(new GameMove("o", 0, 1));
+
+var gameMove = pcPlayer.think();
+gameEngine.move(gameMove);
+
+console.log(gameEngine);
+
+

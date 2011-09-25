@@ -13,3 +13,8 @@ Judea Pearl described best-first search as estimating the promise of node n by a
 MiniMax (MinMax)
 ----------------
 Minimax (sometimes minmax) is a decision rule used in decision theory, game theory, statistics and philosophy for minimizing the possible loss while maximizing the potential gain. Alternatively, it can be thought of as maximizing the minimum gain (maximin). Originally formulated for two-player zero-sum game theory, covering both the cases where players take alternate moves and those where they make simultaneous moves, it has also been extended to more complex games and to general decision making in the presence of uncertainty. http://en.wikipedia.org/wiki/Minimax
+
+
+Play Now
+--------
+Click [here](http://moutasema.github.com/XOGamejQuery/TicTacToe.htm) to play it now.

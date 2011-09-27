@@ -18,3 +18,8 @@ Minimax (sometimes minmax) is a decision rule used in decision theory, game theo
 Play Now
 --------
 Click [here](http://moutasema.github.com/XOGamejQuery/TicTacToe.htm) to play it now.
+
+
+How to use (Wiki)
+-----------------
+Click [here](https://github.com/Moutasema/XOGamejQuery/wiki/XO-Game-JQuery) to view full documentation

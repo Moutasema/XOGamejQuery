@@ -1,15 +1,31 @@
-﻿/// <reference path="http://code.jquery.com/jquery-latest.min.js" />
 (function ($) {
     Object.prototype.clone = function () {
-        var newObj = (this instanceof Array) ? [] : {};
+        /*var newObj = (this instanceof Array) ? [] : {};
         for (i in this) {
             if (i == 'clone') continue;
             if (this[i] && typeof this[i] == "object") {
                 newObj[i] = this[i].clone();
             } else newObj[i] = this[i]
-        } return newObj;
+        } return newObj;*/
+    	var newObj = [];
+    	for (var i = 0; i<this.length; i++){
+    		if(typeof this[i] == "object")
+    			newObj[i] = this[i].clone();
+    		else
+    			newObj[i] = this[i];
+    	}
+    	return newObj;
     };
-
+    global = {
+		invertSymbol: function(symbol){
+			switch (symbol){
+				case "x": 
+					return "o";
+				case "o":
+					return "x";
+			}
+		}
+    }
 
     function GameMove(symbol, row, column) {
         this.symbol = symbol;
@@ -176,14 +192,52 @@
         this.oFunction = 0;
         this.isWinningMove = false;
         this.relatedGamePad = null;
+        this.nodes = null;
+        this.opponentMove = false;
     }
-    ThinkingNode.prototype.heuristic = function () {
-        return this.xFunction - this.oFunction;
+    ThinkingNode.prototype.calculateHeuristic = function (playerSymbol) {
+    	var sum = 0;
+    	var INFINITY = 9999; //Hypothetical infinity value
+    	if (this.isWinningMove){    		
+			sum +=INFINITY;
+    	}
+    	switch (playerSymbol){
+    		case "x":
+    			sum += (this.xFunction - this.oFunction);
+    			break;
+    		case "o":
+    			sum += (this.oFunction - this.xFunction);
+    			break;
+    	}
+        return sum;
+    }
+    ThinkingNode.prototype.totalHeuristic = function(playerSymbol){
+    	var childHeuristics = new Array();
+    	var maxChildHeuristic = 0;
+    	var sum = 0;
+    	if(this.isWinningMove){
+			return this.calculateHeuristic(playerSymbol);
+    	}
+    	if(this.nodes){
+	    	$.each(this.nodes, function (i, childThinkingNode){
+	    		childHeuristics.push(childThinkingNode.totalHeuristic(global.invertSymbol(playerSymbol)));
+	    	});
+    	}
+    	
+    	if (childHeuristics.length){
+    		maxChildHeuristic = Math.max.apply(Math, childHeuristics);
+    	}
+    	if (this.opponentMove)
+    		sum = (-1 * this.calculateHeuristic(playerSymbol)) + maxChildHeuristic;
+    	else
+    		sum = this.calculateHeuristic(playerSymbol) + (-1 * maxChildHeuristic);
+    	return sum;
     }
 
 
     function MinimaxGameStrategy(gameEngine) {
         this.gameEngine = gameEngine;
+        this.MAX_THINKING_LEVEL = 2;
     }
     MinimaxGameStrategy.prototype.isWinningMove = function (symbol, symbolLine) {
         var isMathced = true;
@@ -273,18 +327,33 @@
         }
     }
     MinimaxGameStrategy.prototype.calculateXFunction = function (thinkingNode) {
-        this.calculateRows("x", thinkingNode);
+    	if (thinkingNode.nodes){
+    		var $this = this;
+    		$.each(thinkingNode.nodes, function(i, childThinkingNode){
+    			$this.calculateXFunction(childThinkingNode);
+    		});
+    	}
+    	this.calculateRows("x", thinkingNode);
         this.calculateColumns("x", thinkingNode);
         this.calculateDiagonals("x", thinkingNode);
     }
     MinimaxGameStrategy.prototype.calculateOFunction = function (thinkingNode) {
+    	if (thinkingNode.nodes){
+    		var $this = this;
+    		$.each(thinkingNode.nodes, function(i, childThinkingNode){
+    			$this.calculateOFunction(childThinkingNode);
+    		});
+    	}
         this.calculateRows("o", thinkingNode);
         this.calculateColumns("o", thinkingNode);
         this.calculateDiagonals("o", thinkingNode);
     }
     MinimaxGameStrategy.prototype.calculateHeuristic = function (thinkingNode) {
-        this.calculateXFunction(thinkingNode);
+    	this.calculateXFunction(thinkingNode);
         this.calculateOFunction(thinkingNode);
+    	/*$.each(thinkingNode.nodes, function(i, childThinkingNode){
+    		this.calculateHeuristic(childThinkingNode);
+    	});*/        
     }
     MinimaxGameStrategy.prototype.getEmptyCells = function (gamePad) {
         var emptyCellsIndecis = new Array();
@@ -302,15 +371,25 @@
         }
         return emptyCellsIndecis;
     }
-    MinimaxGameStrategy.prototype.generatePossibleMoves = function (gamePad, symbol) {
+    MinimaxGameStrategy.prototype.generatePossibleMoves = function (gamePad, symbol, currentLevel) {
+    	if (!currentLevel)
+    		currentLevel = 1;
+    	if (currentLevel > this.MAX_THINKING_LEVEL)
+    		return null;
         var emptyCellsIndecis;
         var possibleMoves = new Array();
+        var $this = this;
         emptyCellsIndecis = this.getEmptyCells(gamePad);
         $.each(emptyCellsIndecis, function (i, currentIndex) {
             var thinkingNode = new ThinkingNode();
             thinkingNode.relatedGamePad = gamePad.clone();
             thinkingNode.relatedGamePad[currentIndex.row][currentIndex.column] = symbol;
             thinkingNode.relatedGameMove = new GameMove(symbol, currentIndex.row, currentIndex.column);
+            var subNodes = $this.generatePossibleMoves(thinkingNode.relatedGamePad, global.invertSymbol(symbol), currentLevel+1);
+            if (subNodes)
+            	thinkingNode.nodes = subNodes;
+            if (currentLevel % 2 == 0) //Opponent moves, as the code on Even level (2,4,6,..)
+            	thinkingNode.opponentMove = true;
             possibleMoves.push(thinkingNode);
         });
         return possibleMoves;
@@ -319,28 +398,25 @@
         var possibleMoves = this.generatePossibleMoves(this.gameEngine.gamePad.pad, symbol);
         var $this = this;
         var winningMove = null;
-        $.each(possibleMoves, function (i, possibleMove) {
-            $this.calculateHeuristic(possibleMove);
-            if (possibleMove.isWinningMove)
-                winningMove = possibleMove.relatedGameMove;
-        });
-        if (winningMove)
-            return winningMove;
-        //Find Best Heuristic
         var bestIndex = 0;
         var bestMove = null;
-        var best = 0;
+        var best = -9999999;
         var randomPossibility = 0;
-        switch (symbol) {
-            case "x":
-                best = Number.MIN_VALUE;
-                break;
-            case "o":
-                best = Number.MAX_VALUE;
-                break;
-        }
+        var heuristic;
+        
 
         $.each(possibleMoves, function (i, possibleMove) {
+        	$this.calculateHeuristic(possibleMove);
+            randomPossibility = Math.round(Math.random());
+            heuristic = possibleMove.totalHeuristic(symbol);
+
+            if (/*Look for best value*/ heuristic > best || /*This case to select a random game move in case of a tie, to have unpredictable behaviour.*/ (heuristic == best && randomPossibility == 1)) {
+                best = heuristic;
+                bestIndex = i;
+            }
+        });
+
+        /*$.each(possibleMoves, function (i, possibleMove) {
             bestMove = possibleMove;
             randomPossibility = Math.round(Math.random());
             switch (symbol) {
@@ -367,7 +443,7 @@
                     }
                     break;
             }
-        });
+        });*/
 
         return possibleMoves[bestIndex].relatedGameMove;
     }

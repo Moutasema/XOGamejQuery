@@ -1,0 +1,105 @@
+.game-play {
+  background-image: url('/gameplay.png');
+  position: relative;
+}
+
+.game-pad {
+  width: 315px;
+  height: 315px;
+  position: absolute;
+  top: 40px;
+  left: 160px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.pad-cell {
+  width: 85px;
+  height: 85px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  transition: transform 0.1s ease;
+}
+
+.pad-cell:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.pad-cell:disabled {
+  cursor: not-allowed;
+}
+
+.pad-cell.x {
+  background-image: url('/patrick-small.png');
+}
+
+.pad-cell.o {
+  background-image: url('/sponge-small.png');
+}
+
+.disable-game {
+  background-color: rgba(128, 128, 128, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.thinking-indicator {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .game-pad {
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    gap: 5px;
+    padding: 5px;
+  }
+  
+  .pad-cell {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .thinking-indicator {
+    font-size: 16px;
+    padding: 12px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-pad {
+    width: 90%;
+    height: 70%;
+    top: 15%;
+    left: 5%;
+  }
+  
+  .thinking-indicator {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+}

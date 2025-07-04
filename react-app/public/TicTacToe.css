@@ -1,0 +1,127 @@
+﻿.game-intro, .game-play, .game-end
+{
+    width: 500px;
+    height: 400px;
+}
+
+.game-intro
+{
+    background-image: url(background.png);
+    background-repeat: no-repeat;
+}
+.patrick
+{
+    position: relative;
+    top: 170px;
+    left: 110px;
+    background-image: url(Patrick.png);
+    width: 175px;
+    height: 205px;
+    background-repeat: no-repeat;
+    display: block;
+}
+.patrick:hover
+{
+    background-image: url(Patrick-hover.png);
+}
+.sponge
+{
+    position: relative;
+    top: -31px;
+    left: 292px;
+    display: block;
+    width: 210px;
+    height: 205px;
+    background-repeat: no-repeat;
+    background-image: url(Sponge.png);
+}
+.sponge:hover
+{
+    background-image: url(Sponge-hover.png);
+}
+
+.game-play
+{
+    background-image: url(gameplay.png);
+    background-repeat: no-repeat;
+}
+.game-pad
+{
+    width: 315px;
+    height: 315px;
+    background-color: transparent;
+    position: relative;
+    top: 40px;
+    left: 160px;
+}
+.pad-cell
+{
+    width: 85px;
+    height: 85px;
+    float: left;
+    background-color: transparent;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 50px;
+    margin: 10px;
+}
+.x, .o
+{
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.x
+{
+    background-image: url(patrick-small.png);
+}
+.o
+{
+    background-image: url(sponge-small.png);
+}
+.disable-game
+{
+    background-color:Gray;
+    opacity: 0.5;
+    filter:alpha(opacity=50);
+    height: 400px;
+    width: 500px;
+    z-index: 100;
+    position: relative;
+    top: -315px;
+    left: 0px;
+    display:none;
+}
+
+.game-end
+{
+    background-image: url(endgame.png);
+    background-repeat: no-repeat;
+}
+.game-result
+{
+    position: relative;
+    left: 193px;
+    top: 30px;
+}
+.character-select
+{
+    background-image: url(characterselect.png);
+    background-repeat: no-repeat;
+    display: block;
+    width: 283px;
+    height: 71px;
+    position: relative;
+    left: 180px;
+    top: 55px;
+}
+.play-again
+{
+    background-image: url(playagain.png);
+    background-repeat: no-repeat;
+    display: block;
+    width: 217px;
+    height: 71px;
+    position: relative;
+    left: 215px;
+    top: 90px;
+}

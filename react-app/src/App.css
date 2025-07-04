@@ -1,0 +1,63 @@
+/* App container */
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Common styles for all game states */
+.game-intro, 
+.game-play, 
+.game-end {
+  width: 500px;
+  height: 400px;
+  position: relative;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .app {
+    padding: 10px;
+  }
+  
+  .game-intro, 
+  .game-play, 
+  .game-end {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    min-height: 400px;
+    aspect-ratio: 5/4;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-intro, 
+  .game-play, 
+  .game-end {
+    width: 100%;
+    min-height: 300px;
+    aspect-ratio: 4/3;
+  }
+}
